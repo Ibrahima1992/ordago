@@ -1,15 +1,17 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from config import get_db
 from sqlalchemy.orm import Session
 from api.models.models import Automobile
-
 from sqlalchemy import desc
+from api.auth import oauth2
 
 router = APIRouter()
 
 
-@router.get("automobile/5/premier_dernier(s)")
-async def automobile(db: Session = Depends(get_db)):
+@router.get("/automobile/5/premier_dernier(s)")
+async def automobile(
+    db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
+):
     """
         [1] : Afficher les cinq premières et dernières lignes.
     Args:
@@ -33,7 +35,7 @@ async def automobile(db: Session = Depends(get_db)):
 @router.get("/automobiles")  # , response_model=List[user.UserOut])
 async def automobiles(db: Session = Depends(get_db)):
     """
-    [2] : Nettoyer et afficher l'ensemble de données.
+        [2] : Nettoyer et afficher l'ensemble de données.
     Remplacez toutes les valeurs de colonne qui contiennent ? n.a ou NaN par une valeur null
     Args:
         db (Session, optional): connection à la base de données. Defaults to Depends(get_db).
@@ -41,10 +43,11 @@ async def automobiles(db: Session = Depends(get_db)):
     Returns:
         dict: retourne la liste complète de tous les enregistrements de la dataset
     """
-    return db.query(Automobile).all()
+    res = db.query(Automobile).all()
+    return {"automobile": res}
 
 
-@router.get("automobile/plus_cher_automobile")
+@router.get("/automobile/plus_cher_automobile")
 async def automobile(db: Session = Depends(get_db)):
     """
     [3] : Afficher le nom de l'entreprise automobile la plus chère.
@@ -61,10 +64,10 @@ async def automobile(db: Session = Depends(get_db)):
     )
 
 
-@router.get("automobiles/toyota")
+@router.get("/automobiles/toyota")
 async def automobile(db: Session = Depends(get_db)):
     """
-    [4] : Afficher tous les détails des voitures Toyota.
+        [4] : Afficher tous les détails des voitures Toyota.
 
     Args:
         db (Session, optional): base de données. Defaults to Depends(get_db).
@@ -72,13 +75,19 @@ async def automobile(db: Session = Depends(get_db)):
     Returns:
         dict: [4] : Afficher tous les détails des voitures Toyota.
     """
-    return db.query(Automobile).filter(Automobile.company == "toyota").all()
+    autos = db.query(Automobile).filter(Automobile.company == "toyota").all()
+    if autos is None:
+        raise HTTPException(
+            status_code=status.HTT_404_NOT_FOUND,
+            detail=f"il n'y a pas de voiture avec la compagnie {Automobile.toyata}",
+        )
+    return
 
 
-@router.get("automobiles/infos")
+@router.get("/automobiles/infos")
 async def automobile(db: Session = Depends(get_db)):
     """
-    [5] : Afficher et compter le nombre total de voitures par entreprise.
+        [5] : Afficher et compter le nombre total de voitures par entreprise.
 
     Args:
         db (Session, optional): base de données. Defaults to Depends(get_db).
@@ -93,10 +102,10 @@ async def automobile(db: Session = Depends(get_db)):
     return res.fetchall()
 
 
-@router.get("automobiles/infos/avg_km/")
+@router.get("/automobiles/infos/avg_km/")
 async def automobile(db: Session = Depends(get_db)):
     """
-    [6] : Afficher et trouver le kilométrage moyen de chaque constructeur automobile.
+        [6] : Afficher et trouver le kilométrage moyen de chaque constructeur automobile.
 
     Args:
         db (Session, optional): base de données. Defaults to Depends(get_db).
@@ -110,10 +119,10 @@ async def automobile(db: Session = Depends(get_db)):
     return res.fetchall()
 
 
-@router.get("automobiles/infos/prices/")
+@router.get("/automobiles/infos/prices/")
 async def automobile(db: Session = Depends(get_db)):
     """
-    [7] : Afficher et trier toutes les voitures par colonne Prix.
+        [7] : Afficher et trier toutes les voitures par colonne Prix.
 
     Args:
         db (Session, optional): base de données. Defaults to Depends(get_db).
@@ -126,7 +135,7 @@ async def automobile(db: Session = Depends(get_db)):
     )
 
 
-@router.get("automobiles/infos/fusion")
+@router.get("/automobiles/infos/fusion")
 async def automobile(db: Session = Depends(get_db)):
     """
     [8] : Afficher et concaténer deux blocs de données en utilisant les conditions suivantes.

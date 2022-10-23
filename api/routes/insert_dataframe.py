@@ -6,7 +6,7 @@ try:
         database="ordago",
         user="ordago",
         password="ordago",
-        host="172.22.0.2",
+        host="localhost",
         port="5432",
     )
 
@@ -19,7 +19,7 @@ try:
         df = pd.read_csv("api/ressources/Automobile_data.csv")
         # Remplacement par 0 de tous les enregistrements où le prix était à NAN ou non defini
         df["price"].fillna(0, inplace=True)
-        # INSERTION DES DONNÉES DANS LA TABLE AUTOMOBILE DE LA BASE DE DONNÉES ORDAGO
+        # Insertion des données dans la table automobile
 
         for row in df.itertuples():
             cursor.execute(
@@ -34,6 +34,6 @@ try:
     res = cursor.fetchall()
     print(res)
 except:
-    raise ConnectionRefusedError("erreur lors de la connexion à base de données")
+    raise ConnectionRefusedError("erreur lors de la connexion à la base de données")
 finally:
     conn.close()

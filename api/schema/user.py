@@ -1,25 +1,22 @@
-import email
 from pydantic import BaseModel
+from datetime import datetime
 from typing import Optional
 
+from pydantic.types import conint
 
-class UserBase(BaseModel):
-    lastname: str
-    firstname: str
+
+class UserOut(BaseModel):
+    id: int
     login: str
-    email: str
-    password: str
+    created_at: datetime
 
     class Config:
         orm_mode = True
 
 
-class UserCreate(UserBase):
-    pass
-
-
-class UserUpdate(BaseModel):
-    email: Optional[str]
+class UserCreate(BaseModel):
+    login: str
+    password: str
 
 
 class UserLogin(BaseModel):
@@ -27,28 +24,11 @@ class UserLogin(BaseModel):
     password: str
 
 
-class UserUpdateOut(BaseModel):
-    email: str
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 
-class UserOut(BaseModel):
-    id: int
-    lastname: Optional[str]
-    firstname: Optional[str]
-    login: Optional[str]
-    email: Optional[str]
+class TokenData(BaseModel):
+    id: Optional[str] = None
 
-    class Config:
-        orm_mode = True
-
-
-class User(UserBase):
-    id: int
-
-    class config:
-        orm_mode = True
-
-    lastname: Optional[str]
-    firstname: Optional[str]
-    login: Optional[str]
-    email: Optional[str]
