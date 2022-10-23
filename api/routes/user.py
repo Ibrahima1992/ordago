@@ -6,11 +6,7 @@ import api.schema.user as schemas
 import api.auth.utils as utils
 from config import get_db
 
-# router = APIRouter(prefix="/users", tags=["Users"])
 router = APIRouter()
-
-# /users/
-# /users
 
 
 @router.post(

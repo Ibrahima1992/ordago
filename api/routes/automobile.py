@@ -32,8 +32,10 @@ async def automobile(
     }
 
 
-@router.get("/automobiles")  # , response_model=List[user.UserOut])
-async def automobiles(db: Session = Depends(get_db)):
+@router.get("/automobiles")
+async def automobiles(
+    db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
+):
     """
         [2] : Nettoyer et afficher l'ensemble de données.
     Remplacez toutes les valeurs de colonne qui contiennent ? n.a ou NaN par une valeur null
@@ -43,29 +45,36 @@ async def automobiles(db: Session = Depends(get_db)):
     Returns:
         dict: retourne la liste complète de tous les enregistrements de la dataset
     """
-    res = db.query(Automobile).all()
-    return {"automobile": res}
+    return db.query(Automobile).all()
 
 
 @router.get("/automobile/plus_cher_automobile")
-async def automobile(db: Session = Depends(get_db)):
+async def automobile(
+    db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
+):
     """
-    [3] : Afficher le nom de l'entreprise automobile la plus chère.
+        [3] : Afficher le nom de l'entreprise automobile la plus chère.
     Args:
         db (Session, optional): base de données. Defaults to Depends(get_db).
 
     Returns:
         dict: Afficher le nom de l'entreprise automobile la plus chère.
     """
-    return (
+    auto = (
         db.query(Automobile.company, Automobile.price)
         .order_by(desc(Automobile.price))
         .first()
     )
+    if auto is None:
+        raise HTTPException(status_code=status.HTTP_404, detail="Erreur de la requête")
+
+    return auto
 
 
 @router.get("/automobiles/toyota")
-async def automobile(db: Session = Depends(get_db)):
+async def automobile(
+    db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
+):
     """
         [4] : Afficher tous les détails des voitures Toyota.
 
@@ -78,14 +87,16 @@ async def automobile(db: Session = Depends(get_db)):
     autos = db.query(Automobile).filter(Automobile.company == "toyota").all()
     if autos is None:
         raise HTTPException(
-            status_code=status.HTT_404_NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"il n'y a pas de voiture avec la compagnie {Automobile.toyata}",
         )
-    return
+    return autos
 
 
 @router.get("/automobiles/infos")
-async def automobile(db: Session = Depends(get_db)):
+async def automobile(
+    db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
+):
     """
         [5] : Afficher et compter le nombre total de voitures par entreprise.
 
@@ -103,7 +114,9 @@ async def automobile(db: Session = Depends(get_db)):
 
 
 @router.get("/automobiles/infos/avg_km/")
-async def automobile(db: Session = Depends(get_db)):
+async def automobile(
+    db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
+):
     """
         [6] : Afficher et trouver le kilométrage moyen de chaque constructeur automobile.
 
@@ -120,7 +133,9 @@ async def automobile(db: Session = Depends(get_db)):
 
 
 @router.get("/automobiles/infos/prices/")
-async def automobile(db: Session = Depends(get_db)):
+async def automobile(
+    db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
+):
     """
         [7] : Afficher et trier toutes les voitures par colonne Prix.
 
@@ -136,7 +151,9 @@ async def automobile(db: Session = Depends(get_db)):
 
 
 @router.get("/automobiles/infos/fusion")
-async def automobile(db: Session = Depends(get_db)):
+async def automobile(
+    db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
+):
     """
     [8] : Afficher et concaténer deux blocs de données en utilisant les conditions suivantes.
     Créez deux blocs de données à l'aide des deux dictionnaires suivants :
