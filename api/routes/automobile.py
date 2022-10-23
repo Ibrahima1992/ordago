@@ -1,14 +1,17 @@
+from typing import Dict, List
+from urllib import response
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from config import get_db
 from sqlalchemy.orm import Session
 from api.models.models import Automobile
 from sqlalchemy import desc
 from api.auth import oauth2
+from api.schema import ListAuto, ListNbCar, ListCarPrice, AvgNbCar, user
 
 router = APIRouter()
 
 
-@router.get("/automobile/5/premier_dernier(s)")
+@router.get("/automobile/5/premier_dernier(s)", response_model=ListAuto)
 async def automobile(
     db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
 ):
@@ -26,13 +29,15 @@ async def automobile(
     # Récuperation des données via sqlalchemy
     first_five = db.query(Automobile).all()[:nb_element]
     last_five = db.query(Automobile).all()[-nb_element:]
-    return {
+
+    autos = {
         f"Les {nb_element} premiers": first_five,
         f"Et les {nb_element} derniers": last_five,
     }
+    return {"autos": autos}
 
 
-@router.get("/automobiles")
+@router.get("/automobiles", response_model=List[user.AutomobileOut])
 async def automobiles(
     db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
 ):
@@ -48,7 +53,7 @@ async def automobiles(
     return db.query(Automobile).all()
 
 
-@router.get("/automobile/plus_cher_automobile")
+@router.get("/automobile/plus_cher_automobile", response_model=user.AutoCher)
 async def automobile(
     db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
 ):
@@ -71,7 +76,7 @@ async def automobile(
     return auto
 
 
-@router.get("/automobiles/toyota")
+@router.get("/automobiles/toyota", response_model=List[user.AutomobileOut])
 async def automobile(
     db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
 ):
@@ -93,7 +98,7 @@ async def automobile(
     return autos
 
 
-@router.get("/automobiles/infos")
+@router.get("/automobiles/infos", response_model=List[ListNbCar])
 async def automobile(
     db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
 ):
@@ -113,7 +118,7 @@ async def automobile(
     return res.fetchall()
 
 
-@router.get("/automobiles/infos/avg_km/")
+@router.get("/automobiles/infos/avg_km/", response_model=List[AvgNbCar])
 async def automobile(
     db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
 ):
@@ -132,7 +137,7 @@ async def automobile(
     return res.fetchall()
 
 
-@router.get("/automobiles/infos/prices/")
+@router.get("/automobiles/infos/prices/", response_model=List[ListCarPrice])
 async def automobile(
     db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)
 ):
@@ -145,9 +150,14 @@ async def automobile(
     Returns:
         dict: Afficher et trier toutes les voitures par colonne Prix.
     """
-    return (
+    autos = (
         db.query(Automobile.company, Automobile.price).order_by(Automobile.price).all()
     )
+    if autos is None:
+        raise HTTPException(
+            status_code=status.http_404, detail="Pas d'enregistrement dans la base"
+        )
+    return autos
 
 
 @router.get("/automobiles/infos/fusion")
