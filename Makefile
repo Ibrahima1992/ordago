@@ -10,7 +10,7 @@ status:
 	docker-compose ps
 
 load_data:
-	python3 api/routes/load_data.py
+	pip install pandas; pip install psycopg2-binary; python3 api/routes/load_data.py
 
 api_auto:
 	docker exec -it ordago_api bash
