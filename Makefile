@@ -6,6 +6,8 @@ stop:
 
 restart:
 	docker-compose restart
+status:
+	docker-compose ps
 
 load_data:
 	python3 api/routes/load_data.py
