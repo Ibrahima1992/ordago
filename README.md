@@ -6,7 +6,7 @@
     de vous faire découvrir la technologie fastAPI pour exposer l'API.
 
                 ---- Fonctionnalités ----
-                
+
     - Importer les données (csv) et le traitement avec pandas
     - Ajouter un utilisateur (login && password) car l'API est authentifiée
     - Exemple: login: ordago et password:ordago
@@ -37,3 +37,7 @@
 
 # Rédemarrer les services
     make restart
+
+<!-- Pour visualiser l'API (swagger Documentation)-->
+rendez-vous sur le lien: http://localhost:8000/
+<!-- Pour acceder à la base de données--->
