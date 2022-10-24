@@ -44,7 +44,7 @@ rendez-vous sur le lien: http://localhost:8000/
     Une fois dans la base de données avec "make bdd" par exemple:
     y'a un utilisateur et mot de passe: "user:ordago" et "password:ordago"
 
-    - psql -l localhost -U ordago ordago
+    - psql -h localhost -U ordago ordago
 --------------------------------------------------------
 
 ####    OPTIONS POUR CONTROLLER LES DOCKERS    ####
