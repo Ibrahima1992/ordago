@@ -1,5 +1,19 @@
-FROM python:3.8
+# Utilisez l'image Python 3 en tant que base
+FROM python:3
+
+# Définissez le répertoire de travail pour le conteneur
 WORKDIR /app
-COPY requirements.txt /app/requirements.txt
+
+# Copiez les fichiers requis pour votre application dans le répertoire de travail
 COPY . .
-# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Installez les dépendances de votre application à l'aide de pip
+RUN pip install --upgrade pip
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Exposez le port d'écoute pour votre application FastAPI
+EXPOSE 80
+
+# Définissez l'instruction pour exécuter votre application lors du démarrage du conteneur
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

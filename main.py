@@ -14,16 +14,16 @@ app.include_router(router=user.router, tags=["Login"])
 app.include_router(router=login.router, tags=["Authentification"])
 app.include_router(router=automobile.router, prefix="/test-ordago", tags=["Automobile"])
 
-origins = ["*"]
+# origins = ["*"]
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 
 @app.get("/")

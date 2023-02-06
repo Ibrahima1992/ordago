@@ -1,0 +1,20 @@
+# .env files
+.env
+.env.*
+
+# Python files
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Log files
+*.log
+
+# SQLite database file
+*.sqlite
+
+# FastAPI generated files
+api/generated

@@ -27,7 +27,8 @@ services:
       - "8000:8000"
     volumes:
       - .:/app:rw
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    # command: uvicorn app/main:app --host 0.0.0.0 --port 9999 --reload
+    # command: python3 api/routes/load_data.py
     depends_on:
       - db
     restart: always
